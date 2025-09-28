@@ -13,7 +13,8 @@ const {
 
 router.get('/', getClothingItems);
 router.post('/', createClothingItem);
-router.delete('/:itemId', deleteClothingItemById);
+router.delete('/:itemId', deleteClothingItemById); // delete request to /items/1281289f1j298j19j1
+// req.params = {itemId: 1281289f1j298j19j1}
 router.put('/:itemId/likes', likeItem);
 router.delete('/:itemId/likes', dislikeItem);
 

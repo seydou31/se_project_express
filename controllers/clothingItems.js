@@ -1,50 +1,51 @@
-const ClothingItem = require('../models/clothingItem');
+const ClothingItem = require("../models/clothingItem");
+const STATUS = require('../utils/errors');
 
 // GET /clothing-items (or similar route)
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => {
       if (!items || items.length === 0) {
-        return res.status(404).send({ message: 'No clothing items found' });
+        return res.status(STATUS.NOT_FOUND).send({ message: "No clothing items found" });
       }
-      return res.status(200).send(items);
+      return res.status(STATUS.OK).send(items);
     })
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 
 // POST /clothing-items
 module.exports.createClothingItem = (req, res) => {
-   console.log(req.user._id);
-  const { name, imageUrl, weather, owner } = req.body;
-  ClothingItem.create({ name, imageUrl, weather, owner })
-    .then((item) => res.status(201).send(item))
+  console.log(req.user._id);
+  const { name, imageUrl, weather } = req.body;
+  ClothingItem.create({ name, imageUrl, weather, owner: req.user._id })
+  .then((item) => res.status(STATUS.CREATED).send(item))
     .catch((err) => {
       console.error(err);
       // Handle Mongoose validation errors -> client sent bad data
-      if (err && err.name === 'ValidationError') {
-        const errors = Object.values(err.errors || {}).map(e => e.message);
-        return res.status(400).send({ message: 'Validation error', errors });
+      if (err && err.name === "ValidationError") {
+        const errors = Object.values(err.errors || {}).map((e) => e.message);
+        return res.status(STATUS.BAD_REQUEST).send({ message: "Validation error", errors });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 
 // DELETE /items/:id
 module.exports.deleteClothingItemById = (req, res) => {
-  const { id } = req.params;
-  ClothingItem.findByIdAndDelete(id)
-    .then((deleted) => {
-      if (!deleted) {
-        return res.status(404).send({ message: 'ClothingItem not found' });
-      }
-      return res.send( deleted);
-    })
+  const { itemId } = req.params;
+  ClothingItem.findByIdAndDelete(itemId)
+    .orFail()
+  .then((item) => res.status(STATUS.OK).send(item))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(STATUS.NOT_FOUND).send({ message: "ClothingItem not found" });
+      }  if (err.name === 'CastError'){
+         return res.status(STATUS.BAD_REQUEST).send({message: 'incorrect id type'});
+      }
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
-
