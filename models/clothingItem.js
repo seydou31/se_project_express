@@ -21,7 +21,7 @@ const clothingItem = new mongoose.Schema({
   weather: {
     type: String,
     enum: ["hot", "warm", "cold"],
-    required: true
+    required: true,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -31,7 +31,7 @@ const clothingItem = new mongoose.Schema({
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       default: [],
     },
   ],
