@@ -5,16 +5,13 @@ module.exports.getUsers = (req, res) => {
   user
     .find({})
     .then((users) => {
-      if (!users || users.length === 0) {
-        return res.status(STATUS.OK).send({ message: "No users found" });
-      }
       return res.status(STATUS.OK).send(users);
     })
     .catch((err) => {
       console.error(err);
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server' });
     });
 };
 
@@ -30,7 +27,7 @@ module.exports.createUser = (req, res) => {
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server' });
     });
 };
 
@@ -56,6 +53,6 @@ module.exports.getSpecificUser = (req, res) => {
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server' });
     });
 };

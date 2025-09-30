@@ -24,7 +24,7 @@ module.exports.likeItem = (req, res) =>
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server' });
     });
 
 module.exports.dislikeItem = (req, res) =>
@@ -50,5 +50,5 @@ module.exports.dislikeItem = (req, res) =>
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server' });
     });

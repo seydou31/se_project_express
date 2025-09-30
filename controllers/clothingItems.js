@@ -5,18 +5,13 @@ const STATUS = require("../utils/errors");
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => {
-      if (!items || items.length === 0) {
-        return res
-          .status(STATUS.OK)
-          .send({ message: "No clothing items found" });
-      }
       return res.status(STATUS.OK).send(items);
     })
     .catch((err) => {
       console.error(err);
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server' });
     });
 };
 
@@ -38,7 +33,7 @@ module.exports.createClothingItem = (req, res) => {
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server'});
     });
 };
 
@@ -62,6 +57,6 @@ module.exports.deleteClothingItemById = (req, res) => {
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+        .send({ message: 'An error has occurred on the server' });
     });
 };
