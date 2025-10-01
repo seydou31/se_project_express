@@ -4,9 +4,7 @@ const STATUS = require("../utils/errors");
 // GET /clothing-items (or similar route)
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => {
-      return res.status(STATUS.OK).send(items);
-    })
+    .then(items =>  res.status(STATUS.OK).send(items))
     .catch((err) => {
       console.error(err);
       return res

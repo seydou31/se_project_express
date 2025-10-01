@@ -4,9 +4,7 @@ const STATUS = require("../utils/errors");
 module.exports.getUsers = (req, res) => {
   user
     .find({})
-    .then((users) => {
-      return res.status(STATUS.OK).send(users);
-    })
+    .then((users) => res.status(STATUS.OK).send(users))
     .catch((err) => {
       console.error(err);
       return res
