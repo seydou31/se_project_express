@@ -1,9 +1,10 @@
+const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 const STATUS = require("../utils/errors");
-const mongoose = require("mongoose");
+
 // GET /clothing-items (or similar route)
 module.exports.getClothingItems = (req, res) => {
-  ClothingItem.find({})
+ return  ClothingItem.find({})
     .then((items) => res.status(STATUS.OK).send(items))
     .catch((err) => {
       console.error(err);
@@ -34,7 +35,7 @@ module.exports.createClothingItem = (req, res) => {
     });
 };
 
-//DELETE /items/:id
+// DELETE /items/:id
 module.exports.deleteClothingItemById = (req, res) => {
   const { itemId } = req.params;
 
@@ -44,7 +45,7 @@ module.exports.deleteClothingItemById = (req, res) => {
       .send({ message: "Invalid item ID format" });
     }
 
-  ClothingItem.findById(itemId)
+ return  ClothingItem.findById(itemId)
     .orFail(new Error("item not found"))
     .then((item) => {
       if (item.owner.toString() !== req.user._id.toString()) {
@@ -54,9 +55,7 @@ module.exports.deleteClothingItemById = (req, res) => {
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
-    .then(() => {
-      return res.send({ message: "Item deleted successfully" });
-    })
+    .then(() => res.send({ message: "Item deleted successfully" }))
     .catch((err) => {
       if (err && err.status === STATUS.NOT_AUTHORIZED) {
         return res.status(STATUS.NOT_AUTHORIZED).send({ message: err.message });

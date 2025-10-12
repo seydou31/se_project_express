@@ -1,14 +1,13 @@
+const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 const STATUS = require("../utils/errors");
-const mongoose = require("mongoose");
+
 module.exports.likeItem = (req, res) => {
-  const {itemId} = req.params;
-   if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res
-      .status(400)
-      .send({ message: "Invalid item ID format" });
-    }
-  ClothingItem.findByIdAndUpdate(
+  const { itemId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(400).send({ message: "Invalid item ID format" });
+  }
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
@@ -30,20 +29,18 @@ module.exports.likeItem = (req, res) => {
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server' });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
 module.exports.dislikeItem = (req, res) => {
-  const {itemId} = req.params;
+  const { itemId } = req.params;
 
-if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res
-      .status(400)
-      .send({ message: "Invalid item ID format" });
-    }
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(400).send({ message: "Invalid item ID format" });
+  }
 
-  ClothingItem.findByIdAndUpdate(
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
@@ -65,6 +62,6 @@ if (!mongoose.Types.ObjectId.isValid(itemId)) {
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server' });
+        .send({ message: "An error has occurred on the server" });
     });
 };
