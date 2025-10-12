@@ -1,31 +1,25 @@
 
 const { PORT = 3001 } = process.env;
 const express = require('express');
-
+const cors = require("cors");
 const app = express();
 const mongoose = require('mongoose');
 const mainRoute = require('./routes/index');
 const STATUS = require('./utils/errors');
 
+
+app.use(cors());
+
 // body parsers must be registered before routes so handlers can access req.body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "68d9299567902e0a4b31f959" // req.user._id
-  };
-  next();
-});
-// mount routes
 app.use('/', mainRoute);
 
 // 404 — resource not found
 app.use((req, res) => {
   res.status(STATUS.NOT_FOUND).json({ message: 'Requested resource not found' });
 });
-
-
 
 
 // connect to DB then start the server

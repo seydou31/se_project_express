@@ -1,21 +1,20 @@
 const ClothingItem = require("../models/clothingItem");
 const STATUS = require("../utils/errors");
-
+const mongoose = require("mongoose");
 // GET /clothing-items (or similar route)
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
-    .then(items =>  res.status(STATUS.OK).send(items))
+    .then((items) => res.status(STATUS.OK).send(items))
     .catch((err) => {
       console.error(err);
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server' });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
 // POST /clothing-items
 module.exports.createClothingItem = (req, res) => {
-  console.log(req.user._id);
   const { name, imageUrl, weather } = req.body;
   ClothingItem.create({ name, imageUrl, weather, owner: req.user._id })
     .then((item) => res.status(STATUS.CREATED).send(item))
@@ -31,30 +30,52 @@ module.exports.createClothingItem = (req, res) => {
       }
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server'});
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
-// DELETE /items/:id
+//DELETE /items/:id
 module.exports.deleteClothingItemById = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndDelete(itemId)
-    .orFail()
-    .then((item) => res.status(STATUS.OK).send(item))
+
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res
+      .status(400)
+      .send({ message: "Invalid item ID format" });
+    }
+
+  ClothingItem.findById(itemId)
+    .orFail(new Error("item not found"))
+    .then((item) => {
+      if (item.owner.toString() !== req.user._id.toString()) {
+        const err = new Error('Not authorized to delete item');
+        err.status = STATUS.NOT_AUTHORIZED;
+        throw err;
+      }
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
+    .then(() => {
+      return res.send({ message: "Item deleted successfully" });
+    })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(STATUS.NOT_FOUND)
-          .send({ message: "ClothingItem not found" });
+      if (err && err.status === STATUS.NOT_AUTHORIZED) {
+        return res.status(STATUS.NOT_AUTHORIZED).send({ message: err.message });
       }
-      if (err.name === "CastError") {
-        return res
-          .status(STATUS.BAD_REQUEST)
-          .send({ message: "incorrect id type" });
+
+      if (err && err.name === 'CastError') {
+        return res.status(STATUS.BAD_REQUEST).send({ message: 'Invalid item id' });
       }
+
+      if (
+        err &&
+        (err.message === "item not found" || err.name === "DocumentNotFoundError")
+      ) {
+        return res.status(STATUS.NOT_FOUND).send({ message: "item not found" });
+      }
+
       return res
         .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: 'An error has occurred on the server' });
+        .send({ message: "An error has occurred on the server" });
     });
 };
+
