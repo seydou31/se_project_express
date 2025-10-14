@@ -1,8 +1,9 @@
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
 const user = require("../models/user");
 const STATUS = require("../utils/errors");
 const SECRET = require("../utils/config");
-const jwt = require('jsonwebtoken');
+
 
 module.exports.createUser = async (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -69,9 +70,9 @@ module.exports.login = (req, res) => {
 
   return user
     .findUserByCredentials(email, password)
-    .then((user) => {
+    .then((data) => {
       res.send({
-        token: jwt.sign({ _id: user._id }, SECRET.JWT_SECRET, {
+        token: jwt.sign({ _id: data._id }, SECRET.JWT_SECRET, {
           expiresIn: "7d",
         }),
       });
@@ -93,8 +94,8 @@ module.exports.updateProfile = (req, res) => {
       }
     )
     .orFail(new Error("User not found"))
-    .then((user) => {
-      res.send(user);
+    .then((data) => {
+      res.send(data);
     }).catch((err => {
        if (
         err &&
