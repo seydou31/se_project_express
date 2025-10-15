@@ -39,12 +39,6 @@ module.exports.createClothingItem = (req, res) => {
 module.exports.deleteClothingItemById = (req, res) => {
   const { itemId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res
-      .status(400)
-      .send({ message: "Invalid item ID format" });
-    }
-
  return  ClothingItem.findById(itemId)
     .orFail(new Error("item not found"))
     .then((item) => {

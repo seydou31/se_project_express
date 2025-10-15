@@ -14,7 +14,9 @@ The WTWR back-end is a server that returns the number of users and clothing item
 ## Technologies
 - Express
 - Mongoose
-
+## Project Demo
+ Check out [this video](https://drive.google.com/file/d/1Ad7h2EO3D55Bar1ypi2Cxo8txm15fyiq/view?usp=sharing), where I describe my 
+ project and some challenges I faced while building it.
 
 ## Running the Project
 `npm run start` — to launch the server 

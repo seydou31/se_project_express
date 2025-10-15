@@ -4,9 +4,7 @@ const STATUS = require("../utils/errors");
 
 module.exports.likeItem = (req, res) => {
   const { itemId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res.status(400).send({ message: "Invalid item ID format" });
-  }
+
   return ClothingItem.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
@@ -35,10 +33,6 @@ module.exports.likeItem = (req, res) => {
 
 module.exports.dislikeItem = (req, res) => {
   const { itemId } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res.status(400).send({ message: "Invalid item ID format" });
-  }
 
   return ClothingItem.findByIdAndUpdate(
     itemId,
