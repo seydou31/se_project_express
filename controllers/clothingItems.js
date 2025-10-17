@@ -44,15 +44,15 @@ module.exports.deleteClothingItemById = (req, res) => {
     .then((item) => {
       if (item.owner.toString() !== req.user._id.toString()) {
         const err = new Error('Not authorized to delete item');
-        err.status = STATUS.NOT_AUTHORIZED;
+        err.status = STATUS.FORBIDDEN;
         throw err;
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
     .then(() => res.send({ message: "Item deleted successfully" }))
     .catch((err) => {
-      if (err && err.status === STATUS.NOT_AUTHORIZED) {
-        return res.status(STATUS.NOT_AUTHORIZED).send({ message: err.message });
+      if (err && err.status === STATUS.FORBIDDEN) {
+        return res.status(STATUS.FORBIDDEN).send({ message: err.message });
       }
 
       if (err && err.name === 'CastError') {

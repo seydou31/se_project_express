@@ -78,7 +78,7 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(STATUS.BAD_REQUEST).send({ message: err.message });
+      res.status(STATUS.UNAUTHORIZED).send({ message: err.message });
     });
 };
 
@@ -97,15 +97,12 @@ module.exports.updateProfile = (req, res) => {
     .then((data) => {
       res.send(data);
     }).catch((err => {
-       if (
-        err &&
-        (err.message === "User not found" ||
-          err.name === "DocumentNotFoundError")
-      ) {
-        return res.status(STATUS.NOT_FOUND).send({ message: "User not found" });
-      }
-      return res
-        .status(STATUS.INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      if (err.name === 'ValidationError') {
+    res.status(STATUS.BAD_REQUEST).send({ message: err.message });
+  } else if (err.message === "User not found") {
+    res.status(STATUS.NOT_FOUND).send({ message: err.message });
+  } else {
+    res.status(STATUS.INTERNAL_SERVER_ERROR).send({ message: err.message });
+  }
     }));
 };
