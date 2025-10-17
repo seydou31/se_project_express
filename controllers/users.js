@@ -78,7 +78,7 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(STATUS.UNAUTHORIZED).send({ message: err.message });
+      res.status(STATUS.BAD_REQUEST).send({ message: err.message });
     });
 };
 
