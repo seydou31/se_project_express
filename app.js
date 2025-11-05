@@ -18,6 +18,13 @@ app.use(requestLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// crash testing
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
 // routes
 app.use('/', mainRoute);
 

@@ -25,3 +25,10 @@ The WTWR back-end is a server that returns the number of users and clothing item
 
 ### Testing
 Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+
+### Domain name
+Check out [my domain](https://clothes.madhacker.biz)
+
+### Frontend
+This is [my frontend](https://github.com/seydou31/se_project_react)
+
