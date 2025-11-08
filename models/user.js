@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const BadRequestError = require("../errors/bad-request-err");
+
 const user = new mongoose.Schema({
   name: {
     type: String,
@@ -36,20 +37,20 @@ const user = new mongoose.Schema({
 });
 
 user.statics.findUserByCredentials = function (email, password) {
-  return this.findOne({ email }).select('+password')
+  return this.findOne({ email })
+    .select("+password")
     .then((customer) => {
       if (!customer) {
-         throw new BadRequestError("Incorrect password or email")
+        throw new BadRequestError("Incorrect password or email");
       }
 
-      return bcrypt.compare(password, customer.password)
-        .then((matched) => {
-          if (!matched) {
-            return Promise.reject(new Error('Incorrect password or email'));
-          }
+      return bcrypt.compare(password, customer.password).then((matched) => {
+        if (!matched) {
+          return Promise.reject(new Error("Incorrect password or email"));
+        }
 
-          return customer;
-        });
+        return customer;
+      });
     });
 };
 
